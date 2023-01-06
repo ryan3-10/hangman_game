@@ -7,6 +7,7 @@ win.geometry("800x500")
 count = 0
 stand = 'Helvetica 13'
 lives = 0
+letters_guessed = []
 
 def clear_window():
     for widget in win.winfo_children():
@@ -24,7 +25,7 @@ def get_word():
     confirmation = Entry(win, width = 42)
     confirmation.config(show="*")
     confirmation.pack()
-    ttk.Button(win, text = "Play", command = lambda: check_word(entry.get(), confirmation.get())).pack()
+    ttk.Button(win, text = "Play", command = lambda: check_word(entry.get().upper(), confirmation.get().upper())).pack()
 
 def check_word(word, confirmed):
     global count
@@ -52,15 +53,23 @@ def play(string):
     board_label.pack()
     entry = Entry(win, width=1)
     entry.pack()
-    ttk.Button(win, text="Guess", command=lambda: check_guess(entry.get(), string, board, board_label, lives_label)).pack()
+    ttk.Button(win, text="Guess", command=lambda: check_guess(entry.get().upper(), string, board, board_label, lives_label, guessed)).pack()
     lives_label = Label(win, text=str(lives) + " lives left", font=stand)
     lives_label.pack()
+    ttk.Label(win, text="\nLetters Guessed:", font=stand).pack()
+    guessed = Label(win, text=letters_guessed, font=stand)
+    guessed.pack()
 
-def check_guess(letter, string, list, label1, label2):
-    win.update()
+def check_guess(letter, string, list, label1, label2, guessed):
     global lives
+    letters_guessed.append(letter)
+    guessed.config(text=letters_guessed)
     if letter in string:
-        list[string.index(letter)] = letter
+        i = 0
+        for char in string:
+            if char == letter:
+                list[i] = letter
+            i +=1
         label1.config(text=list)
         if "_" not in list:
             clear_window()

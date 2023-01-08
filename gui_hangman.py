@@ -15,6 +15,10 @@ def clear_window():
 
 def get_word():
     global lives
+    global letters_guessed
+    global count
+    count = 0
+    letters_guessed = []
     lives = 6    
     clear_window()
     ttk.Label(win, text="Hanger, what is your word?", font=stand).pack()
@@ -53,15 +57,25 @@ def play(string):
     board_label.pack()
     entry = Entry(win, width=1)
     entry.pack()
-    ttk.Button(win, text="Guess", command=lambda: check_guess(entry.get().upper(), string, board, board_label, lives_label, guessed)).pack()
+    ttk.Button(win, text="Guess", command=lambda: check_guess(entry, string, board, board_label, lives_label, guessed, check_length)).pack()
     lives_label = Label(win, text=str(lives) + " lives left", font=stand)
     lives_label.pack()
-    ttk.Label(win, text="\nLetters Guessed:", font=stand).pack()
+    check_length = Label(win, text="", font=stand)
+    check_length.pack()
     guessed = Label(win, text=letters_guessed, font=stand)
     guessed.pack()
 
-def check_guess(letter, string, list, label1, label2, guessed):
+def check_guess(entry, string, list, label1, label2, guessed, check_length):
     global lives
+    letter = entry.get().upper()
+    entry.delete(0, END)
+    if len(letter) > 1 or not letter.isalpha():
+        check_length.config(text="Please guess exactly one alphabetical character at a time.")
+        return
+    else:
+        check_length.config(text="")
+    if letter in letters_guessed:
+        return
     letters_guessed.append(letter)
     guessed.config(text=letters_guessed)
     if letter in string:
